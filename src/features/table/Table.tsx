@@ -7,14 +7,35 @@ export default function Table() {
   const tableData = useAppSelector((state) => state.table.data);
   const [pageNumber, setPageNumber] = useState(1);
   const [sortBy, setSortBy] = useState<{
-    column: 'market_cap_rank' | 'current_price' | 'total_volume' | 'market_cap';
+    column: 'market_cap_rank' | 'name' | 'current_price' | 'total_volume' | 'market_cap';
     isAscending: boolean;
   }>({ column: 'market_cap_rank', isAscending: true });
 
   const changeSorting = useCallback(
-    (isAscending: boolean = false, value: 'market_cap_rank' | 'current_price' | 'total_volume' | 'market_cap') => {
-      if (isAscending) dispatch(setTableData([...tableData].sort((a, b) => a[value] - b[value])));
-      else dispatch(setTableData([...tableData].sort((a, b) => b[value] - a[value])));
+    (
+      isAscending: boolean = false,
+      value: 'market_cap_rank' | 'name' | 'current_price' | 'total_volume' | 'market_cap'
+    ) => {
+      if (isAscending)
+        dispatch(
+          setTableData(
+            [...tableData].sort((a, b) => {
+              if (typeof a[value] === 'string' && typeof b[value] === 'string')
+                return (a[value] as string).localeCompare(b[value] as string);
+              return (a[value] as number) - (b[value] as number);
+            })
+          )
+        );
+      else
+        dispatch(
+          setTableData(
+            [...tableData].sort((a, b) => {
+              if (typeof a[value] === 'string' && typeof b[value] === 'string')
+                return (b[value] as string).localeCompare(a[value] as string);
+              return (b[value] as number) - (a[value] as number);
+            })
+          )
+        );
     },
     [tableData, dispatch]
   );
@@ -40,12 +61,54 @@ export default function Table() {
       <table>
         <thead>
           <tr>
-            <th onClick={() => setSortBy({ column: 'market_cap_rank', isAscending: !sortBy.isAscending })}>#</th>
-            <th>Coin</th>
+            <th
+              onClick={() =>
+                setSortBy({
+                  column: 'market_cap_rank',
+                  isAscending: sortBy.column !== 'market_cap_rank' ? false : !sortBy.isAscending,
+                })
+              }
+            >
+              #
+            </th>
+            <th
+              onClick={() =>
+                setSortBy({ column: 'name', isAscending: sortBy.column !== 'name' ? false : !sortBy.isAscending })
+              }
+            >
+              Coin
+            </th>
             <th></th>
-            <th onClick={() => setSortBy({ column: 'current_price', isAscending: !sortBy.isAscending })}>Price</th>
-            <th onClick={() => setSortBy({ column: 'total_volume', isAscending: !sortBy.isAscending })}>24h Volume</th>
-            <th onClick={() => setSortBy({ column: 'market_cap', isAscending: !sortBy.isAscending })}>Mkt Cap</th>
+            <th
+              onClick={() =>
+                setSortBy({
+                  column: 'current_price',
+                  isAscending: sortBy.column !== 'current_price' ? false : !sortBy.isAscending,
+                })
+              }
+            >
+              Price
+            </th>
+            <th
+              onClick={() =>
+                setSortBy({
+                  column: 'total_volume',
+                  isAscending: sortBy.column !== 'total_volume' ? false : !sortBy.isAscending,
+                })
+              }
+            >
+              24h Volume
+            </th>
+            <th
+              onClick={() =>
+                setSortBy({
+                  column: 'market_cap',
+                  isAscending: sortBy.column !== 'market_cap' ? false : !sortBy.isAscending,
+                })
+              }
+            >
+              Mkt Cap
+            </th>
             {/* <th>Last 7 days</th> */}
           </tr>
         </thead>
