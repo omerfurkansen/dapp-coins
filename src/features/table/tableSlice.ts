@@ -16,9 +16,9 @@ const initialState = {
   loading: false,
 };
 
-export const fetchTableData = createAsyncThunk('table/fetchTableData', async () => {
+export const fetchTableData = createAsyncThunk('table/fetchTableData', async (pageNumber: number) => {
   const response = await httpClient.get(
-    '/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=true'
+    `/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=${pageNumber}&sparkline=true`
   );
   return response.data;
 });

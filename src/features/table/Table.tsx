@@ -1,14 +1,15 @@
 import { fetchTableData } from './tableSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Table() {
   const dispatch = useAppDispatch();
   const tableData = useAppSelector((state) => state.table.data);
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchTableData());
-  }, [dispatch]);
+    dispatch(fetchTableData(pageNumber));
+  }, [dispatch, pageNumber]);
 
   function formatDollar(value: number, maxSignificantDigits = 12) {
     return new Intl.NumberFormat('en-US', {
@@ -56,6 +57,12 @@ export default function Table() {
     <div>
       <h1>Table</h1>
       {tableData.length > 0 ? renderTable() : <p>Loading...</p>}
+      <button onClick={() => setPageNumber(pageNumber - 1)} disabled={pageNumber === 1}>
+        Previous
+      </button>
+      <button onClick={() => setPageNumber(pageNumber + 1)} disabled={tableData.length === 0}>
+        Next
+      </button>
     </div>
   );
 }
