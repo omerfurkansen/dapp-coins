@@ -1,15 +1,31 @@
-import { fetchTableData } from './tableSlice';
+import { fetchTableData, setTableData } from './tableSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function Table() {
   const dispatch = useAppDispatch();
   const tableData = useAppSelector((state) => state.table.data);
   const [pageNumber, setPageNumber] = useState(1);
+  const [sortBy, setSortBy] = useState<{
+    column: 'market_cap_rank' | 'current_price' | 'total_volume' | 'market_cap';
+    isAscending: boolean;
+  }>({ column: 'market_cap_rank', isAscending: true });
+
+  const changeSorting = useCallback(
+    (isAscending: boolean = false, value: 'market_cap_rank' | 'current_price' | 'total_volume' | 'market_cap') => {
+      if (isAscending) dispatch(setTableData([...tableData].sort((a, b) => a[value] - b[value])));
+      else dispatch(setTableData([...tableData].sort((a, b) => b[value] - a[value])));
+    },
+    [tableData, dispatch]
+  );
 
   useEffect(() => {
     dispatch(fetchTableData(pageNumber));
   }, [dispatch, pageNumber]);
+
+  useEffect(() => {
+    changeSorting(sortBy.isAscending, sortBy.column);
+  }, [sortBy]);
 
   function formatDollar(value: number, maxSignificantDigits = 12) {
     return new Intl.NumberFormat('en-US', {
@@ -24,12 +40,12 @@ export default function Table() {
       <table>
         <thead>
           <tr>
-            <th>#</th>
+            <th onClick={() => setSortBy({ column: 'market_cap_rank', isAscending: !sortBy.isAscending })}>#</th>
             <th>Coin</th>
             <th></th>
-            <th>Price</th>
-            <th>24h Volume</th>
-            <th>Mkt Cap</th>
+            <th onClick={() => setSortBy({ column: 'current_price', isAscending: !sortBy.isAscending })}>Price</th>
+            <th onClick={() => setSortBy({ column: 'total_volume', isAscending: !sortBy.isAscending })}>24h Volume</th>
+            <th onClick={() => setSortBy({ column: 'market_cap', isAscending: !sortBy.isAscending })}>Mkt Cap</th>
             {/* <th>Last 7 days</th> */}
           </tr>
         </thead>

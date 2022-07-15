@@ -46,4 +46,6 @@ const tableSlice = createSlice({
   },
 });
 
+export const { setTableData } = tableSlice.actions;
+
 export default tableSlice.reducer;
