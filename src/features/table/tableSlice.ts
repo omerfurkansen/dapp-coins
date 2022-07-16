@@ -11,6 +11,7 @@ const initialState = {
       current_price: 0,
       total_volume: 0,
       market_cap: 0,
+      sparkline_in_7d: { price: [] },
     },
   ],
   loading: false,
