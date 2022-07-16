@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import { MdContentCopy } from 'react-icons/md';
 import axios from 'axios';

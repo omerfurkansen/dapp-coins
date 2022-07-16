@@ -4,6 +4,7 @@ import httpClient from '../../client/httpClient';
 const initialState = {
   data: [
     {
+      id: '',
       market_cap_rank: 0,
       name: '',
       symbol: '',

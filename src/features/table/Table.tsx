@@ -4,10 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import { Chart as ChartJS, registerables } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(...registerables);
 
 export default function Table() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const tableData = useAppSelector((state) => state.table.data);
   const [pageNumber, setPageNumber] = useState(1);
@@ -163,7 +165,7 @@ export default function Table() {
         </thead>
         <tbody>
           {tableData.map((item, index) => (
-            <tr key={index}>
+            <tr key={index} onClick={() => navigate(`/coin/${item.id}`)}>
               <td>{item.market_cap_rank}</td>
               <td>
                 <img src={item.image} alt={item.name} width="30" height="30" />
