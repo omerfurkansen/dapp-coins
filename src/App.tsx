@@ -1,7 +1,14 @@
-import Table from './features/table/Table';
+import { BrowserRouter } from 'react-router-dom';
+import Router from './router';
+import Navbar from './features/navbar/Navbar';
 
 function App() {
-  return <Table />;
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <Router />
+    </BrowserRouter>
+  );
 }
 
 export default App;
