@@ -1,12 +1,8 @@
 import { fetchTableData, setTableData } from './tableSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useCallback, useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-
-import { Chart as ChartJS, registerables } from 'chart.js';
 import { useNavigate } from 'react-router-dom';
-
-ChartJS.register(...registerables);
+import Chart from 'react-apexcharts';
 
 export default function Table() {
   const navigate = useNavigate();
@@ -20,46 +16,24 @@ export default function Table() {
 
   function renderLineChart(coin: any) {
     const { price } = coin.sparkline_in_7d;
-    const labels = Array(price.length).fill('');
-    const data = price.map((item: number) => item);
-    const dataSet = {
-      labels,
-      datasets: [
-        {
-          label: '',
-          data,
-          borderColor: data[0] > data[data.length - 1] ? 'red' : 'green',
-          borderWidth: 0.5,
+    const options = {
+      tooltip: {
+        enabled: false,
+      },
+      stroke: {
+        width: 0.5,
+      },
+      chart: {
+        sparkline: {
+          enabled: true,
         },
-      ],
+        animations: {
+          enabled: false,
+        },
+      },
+      colors: [price[0] > price[price.length - 1] ? '#ff0000' : '#006400'],
     };
-    return (
-      <Line
-        style={{ width: 100 }}
-        data={dataSet}
-        options={{
-          events: [],
-          elements: {
-            point: {
-              radius: 0,
-            },
-          },
-          plugins: {
-            legend: {
-              display: false,
-            },
-          },
-          scales: {
-            x: {
-              display: false,
-            },
-            y: {
-              display: false,
-            },
-          },
-        }}
-      />
-    );
+    return <Chart width={150} options={options} series={[{ data: price }]} type="line" />;
   }
 
   const changeSorting = useCallback(

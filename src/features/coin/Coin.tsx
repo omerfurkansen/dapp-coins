@@ -2,7 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Chart from 'react-apexcharts';
-import ReactApexChart from 'react-apexcharts';
 
 export default function Coin() {
   const { id } = useParams();
@@ -29,25 +28,28 @@ export default function Coin() {
       },
     ];
     return (
-      <ReactApexChart
+      <Chart
         height={350}
         type="candlestick"
         series={series}
         options={{
-          xaxis: {
-            type: 'datetime',
-            tickPlacement: 'between',
-          },
-          yaxis: {
-            opposite: true,
-          },
-          title: {
-            text: 'Coin Price',
-            align: 'left',
-          },
           chart: {
             toolbar: {
               show: false,
+            },
+          },
+          xaxis: {
+            type: 'datetime',
+          },
+          grid: {
+            xaxis: {
+              lines: {
+                show: true,
+              },
+            },
+            row: {
+              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+              opacity: 0.5,
             },
           },
         }}
