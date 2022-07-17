@@ -1,12 +1,15 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
 import tableReducer from '../features/table/tableSlice';
+import coinReducer from '../features/coin/coinSlice';
+import themeReducer from '../features/theme/themeSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
     table: tableReducer,
+    coin: coinReducer,
+    theme: themeReducer,
   },
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type AppDispatch = typeof store.dispatch;
