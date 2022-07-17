@@ -1,67 +1,77 @@
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { ApexOptions } from 'apexcharts';
 import Chart from 'react-apexcharts';
+import { fetchCoinChartData } from './coinSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import Spinner from '../../assets/spinner.svg';
 
 export default function Coin() {
   const { id } = useParams();
-  const [chartData, setChartData] = useState([]);
 
-  async function fetchCoin() {
-    const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}/ohlc?vs_currency=usd&days=1`);
-    setChartData(data);
-  }
+  const dispatch = useAppDispatch();
+  const coinChartData = useAppSelector((state) => state.coin.data);
+  const isLoading = useAppSelector((state) => state.coin.loading);
+  const isDarkTheme = useAppSelector((state) => state.theme.isDarkTheme);
 
   useEffect(() => {
-    fetchCoin();
-  }, []);
+    dispatch(fetchCoinChartData(id));
+  }, [dispatch, id]);
 
   function renderChart() {
     const series = [
       {
-        data: chartData.map((item: any) => {
+        data: coinChartData.map((item) => {
+          const [x, ...y] = item;
           return {
-            x: item[0],
-            y: [item[1], item[2], item[3], item[4]],
+            x,
+            y,
           };
         }),
       },
     ];
-    return (
-      <Chart
-        height={350}
-        type="candlestick"
-        series={series}
-        options={{
-          chart: {
-            toolbar: {
-              show: false,
-            },
+    const options: ApexOptions = {
+      chart: {
+        toolbar: {
+          show: false,
+        },
+      },
+      xaxis: {
+        type: 'datetime',
+      },
+      yaxis: {
+        labels: {
+          formatter: (value) => `${value.toString().slice(0, 8)} USD`,
+
+          style: {
+            colors: isDarkTheme ? 'rgba(255,255,255, .6)' : '#000',
           },
-          xaxis: {
-            type: 'datetime',
+        },
+      },
+      grid: {
+        xaxis: {
+          lines: {
+            show: true,
           },
-          grid: {
-            xaxis: {
-              lines: {
-                show: true,
-              },
-            },
-            row: {
-              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-              opacity: 0.5,
-            },
-          },
-        }}
-      />
-    );
+        },
+        borderColor: isDarkTheme ? 'rgba(255,255,255, .2)' : 'rgba(0,0,0, .2)',
+      },
+      tooltip: {
+        enabled: false,
+      },
+    };
+    return <Chart width={1200} type="candlestick" series={series} options={options} />;
   }
 
   return (
     <>
-      <Link to="/">Go Back</Link>
-      <h1>Coin Page and {id}</h1>
-      {chartData.length > 0 && renderChart()}
+      {isLoading ? (
+        <div style={{ textAlign: 'center' }}>
+          <img src={Spinner} alt="loading" width="50%" />
+        </div>
+      ) : (
+        renderChart()
+      )}
     </>
   );
 }

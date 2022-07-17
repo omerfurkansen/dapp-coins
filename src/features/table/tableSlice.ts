@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import httpClient from '../../client/httpClient';
+import { coinGeckoClient as httpClient } from '../../client/httpClient';
 
 const initialState = {
   data: [
@@ -12,7 +12,7 @@ const initialState = {
       current_price: 0,
       total_volume: 0,
       market_cap: 0,
-      sparkline_in_7d: { price: [] },
+      sparkline_in_7d: { price: [0] },
     },
   ],
   loading: false,
