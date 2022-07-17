@@ -1,6 +1,7 @@
 import { IoMdSunny } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import theme from 'styled-theming';
 
 const NavbarContainer = styled.nav`
   display: flex;
@@ -28,7 +29,10 @@ const NavbarLink = styled(Link)`
   cursor: pointer;
 
   &:hover {
-    box-shadow: inset 0px -3px 0px rgba(255, 255, 255, 0.1);
+    box-shadow: ${theme('theme', {
+      light: 'inset 0px -3px 0px rgba(0, 0, 0, 0.1)',
+      dark: 'inset 0px -3px 0px rgba(255, 255, 255, 0.1)',
+    })};
     transition: box-shadow 0.2s ease-in-out;
   }
 
@@ -53,6 +57,45 @@ const ThemeSwitcher = styled(IoMdSunny)`
   height: 24px;
   cursor: pointer;
   user-select: none;
+
+  &:hover {
+    fill: ${theme('theme', {
+      light: 'grey',
+      dark: '#fff',
+    })};
+    transition: fill 0.2s ease-in-out;
+  }
 `;
 
-export { NavbarContainer, NavbarLink, ThemeSwitcher };
+const GoBackLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  left: 2rem;
+  top: 1.5rem;
+  z-index: 1;
+  &:hover {
+    color: ${theme('theme', {
+      light: 'grey',
+      dark: '#fff',
+    })};
+    transition: color 0.2s ease-in-out;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+  }
+  @media (max-width: 768px) {
+    padding: 0.5rem 0;
+    font-size: 1rem;
+  }
+`;
+
+export { GoBackLink, NavbarContainer, NavbarLink, ThemeSwitcher };

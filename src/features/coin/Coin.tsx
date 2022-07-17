@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ApexOptions } from 'apexcharts';
 import Chart from 'react-apexcharts';
 import { fetchCoinChartData } from './coinSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import Spinner from '../../assets/spinner.svg';
 
 export default function Coin() {
   const { id } = useParams();
@@ -11,6 +12,7 @@ export default function Coin() {
   const dispatch = useAppDispatch();
   const coinChartData = useAppSelector((state) => state.coin.data);
   const isLoading = useAppSelector((state) => state.coin.loading);
+  const isDarkTheme = useAppSelector((state) => state.theme.isDarkTheme);
 
   useEffect(() => {
     dispatch(fetchCoinChartData(id));
@@ -37,26 +39,39 @@ export default function Coin() {
       xaxis: {
         type: 'datetime',
       },
+      yaxis: {
+        labels: {
+          formatter: (value) => `${value.toString().slice(0, 8)} USD`,
+
+          style: {
+            colors: isDarkTheme ? 'rgba(255,255,255, .6)' : '#000',
+          },
+        },
+      },
       grid: {
         xaxis: {
           lines: {
             show: true,
           },
         },
-        row: {
-          colors: ['#f3f3f3', 'transparent'],
-          opacity: 0.5,
-        },
+        borderColor: isDarkTheme ? 'rgba(255,255,255, .2)' : 'rgba(0,0,0, .2)',
+      },
+      tooltip: {
+        enabled: false,
       },
     };
-    return <Chart height={350} type="candlestick" series={series} options={options} />;
+    return <Chart width={1200} type="candlestick" series={series} options={options} />;
   }
 
   return (
     <>
-      <Link to="/">Go Back</Link>
-      <h1>Coin Page and {id}</h1>
-      {!isLoading && renderChart()}
+      {isLoading ? (
+        <div style={{ textAlign: 'center' }}>
+          <img src={Spinner} alt="loading" width="50%" />
+        </div>
+      ) : (
+        renderChart()
+      )}
     </>
   );
 }

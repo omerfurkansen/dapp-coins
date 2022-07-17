@@ -6,6 +6,15 @@ import theme from 'styled-theming';
 import { useAppSelector } from './app/hooks';
 
 const GlobalStyle = createGlobalStyle<{ isPageLoaded: boolean }>`
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
   body {
     margin: 0;
     padding: 0;

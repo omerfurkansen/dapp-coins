@@ -101,15 +101,6 @@ const ButtonsContainer = styled.div`
 `;
 
 const HomeScreen = styled.div`
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
   animation: fadein 1s;
 `;
 
