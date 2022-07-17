@@ -1,8 +1,11 @@
 import { fetchTableData, setTableData } from './tableSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Chart from 'react-apexcharts';
 
 export default function Table() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const tableData = useAppSelector((state) => state.table.data);
   const [pageNumber, setPageNumber] = useState(1);
@@ -10,6 +13,28 @@ export default function Table() {
     column: 'market_cap_rank' | 'name' | 'current_price' | 'total_volume' | 'market_cap';
     isAscending: boolean;
   }>({ column: 'market_cap_rank', isAscending: true });
+
+  function renderLineChart(coin: any) {
+    const { price } = coin.sparkline_in_7d;
+    const options = {
+      tooltip: {
+        enabled: false,
+      },
+      stroke: {
+        width: 0.5,
+      },
+      chart: {
+        sparkline: {
+          enabled: true,
+        },
+        animations: {
+          enabled: false,
+        },
+      },
+      colors: [price[0] > price[price.length - 1] ? '#ff0000' : '#006400'],
+    };
+    return <Chart width={150} options={options} series={[{ data: price }]} type="line" />;
+  }
 
   const changeSorting = useCallback(
     (
@@ -109,12 +134,12 @@ export default function Table() {
             >
               Mkt Cap
             </th>
-            {/* <th>Last 7 days</th> */}
+            <th>Last 7 days</th>
           </tr>
         </thead>
         <tbody>
           {tableData.map((item, index) => (
-            <tr key={index}>
+            <tr key={index} onClick={() => navigate(`/coin/${item.id}`)}>
               <td>{item.market_cap_rank}</td>
               <td>
                 <img src={item.image} alt={item.name} width="30" height="30" />
@@ -124,7 +149,7 @@ export default function Table() {
               <td>{formatDollar(item.current_price)}</td>
               <td>{formatDollar(item.total_volume)}</td>
               <td>{formatDollar(item.market_cap)}</td>
-              {/* <td>{item.percentChange7d}</td> */}
+              <td>{renderLineChart(item)}</td>
             </tr>
           ))}
         </tbody>
