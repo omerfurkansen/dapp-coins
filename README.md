@@ -1,9 +1,10 @@
-# Coinmarketcap Clone - Reactjs
+# Dapp Coins Charts - Reactjs
 
 - TypeScript
 - React.js
 - Redux RTK - Redux Thunk
-- Metamask
+- Router
+- Ethers.js & Metamask
 - ApexChart (Line & CandleStick)
 - StyledComponents
 
