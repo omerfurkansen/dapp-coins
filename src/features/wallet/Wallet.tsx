@@ -1,8 +1,7 @@
-import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
-import { chainIdClient as httpClient } from '../../client/httpClient';
 import {
+  BalanceText,
   BalanceEye,
   MetamaskFoxComponent,
   ConnectButton,
@@ -10,65 +9,59 @@ import {
   WalletComponent,
   CopyWalletAddress,
   MetamaskContainer,
+  AdressText,
 } from './WalletStyle';
+import Spinner from '../Spinner';
+import { fetchNetworkData, fetchWalletData } from './walletSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 
 const { ethereum } = window;
-const provider = new ethers.providers.Web3Provider(ethereum);
 
 export default function Wallet() {
-  const [walletAddress, setWalletAddress] = useState('');
-  const [walletBalance, setWalletBalance] = useState('0');
-  const [network, setNetwork] = useState('');
-  const [showBalance, setShowBalance] = useState(false);
-  const [isUserConnected, setIsUserConnected] = useState(false);
+  const dispatch = useAppDispatch();
 
-  async function getChainId() {
-    const { chainId: chainIdFromNetwork } = await provider.getNetwork();
-    const result = await httpClient.get('/chains.json');
-    const chainId = result.data.find((chain: any) => chain.networkId === chainIdFromNetwork);
-    setNetwork(chainId.name);
-  }
+  const { address, balance, isConnected } = useAppSelector((state) => state.user.wallet);
+  const networkName = useAppSelector((state) => state.user.network.name);
+  const isLoading = useAppSelector((state) => state.user.isLoading);
+
+  const [showBalance, setShowBalance] = useState(false);
 
   const getAccount = useCallback(async () => {
-    if (ethereum === undefined) return;
+    if (ethereum === undefined) {
+      alert('Please install MetaMask');
+      window.open('https://metamask.io/', '_blank');
+      return;
+    }
     try {
-      await getChainId();
-
-      const [account] = await ethereum.request({ method: 'eth_requestAccounts' });
-      setWalletAddress(account);
-
-      const balanceInWei = await provider.getBalance(account);
-      const balanceInEther = Number(ethers.utils.formatEther(balanceInWei)).toFixed(4);
-      setWalletBalance(balanceInEther);
-
-      setIsUserConnected(true);
+      dispatch(fetchNetworkData());
+      dispatch(fetchWalletData());
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [dispatch]);
 
-  ethereum.on('accountsChanged', async (accounts: any) => {
-    const [account] = accounts;
-    setWalletAddress(account);
-    const balanceInWei = await provider.getBalance(account);
-    const balanceInEther = Number(ethers.utils.formatEther(balanceInWei)).toFixed(4);
-    setWalletBalance(balanceInEther);
-  });
+  if (ethereum !== undefined) {
+    ethereum.on('accountsChanged', async () => {
+      dispatch(fetchWalletData());
+    });
 
-  ethereum.on('chainChanged', () => {
-    window.location.reload();
-  });
+    ethereum.on('chainChanged', () => {
+      window.location.reload();
+    });
+  }
 
   return (
     <>
-      {isUserConnected ? (
+      {isLoading ? (
+        <Spinner />
+      ) : isConnected ? (
         <WalletComponent>
-          <h3>{network} Network</h3>
-          <h3 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>{networkName} Network</h3>
+          <AdressText>
             <MetamaskFoxComponent size="small" />
-            {walletAddress ? `${walletAddress.slice(0, 5)}...${walletAddress.slice(34)}` : '0x0'}
-            <CopyWalletAddress onClick={() => navigator.clipboard.writeText(walletAddress)} />
-          </h3>
+            {address ? `${address.slice(0, 5)}...${address.slice(34)}` : '0x0'}
+            <CopyWalletAddress onClick={() => navigator.clipboard.writeText(address)} />
+          </AdressText>
           <div
             style={{
               display: 'flex',
@@ -76,9 +69,9 @@ export default function Wallet() {
               alignItems: 'center',
             }}
           >
-            <h3 style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', width: 200, height: 50 }}>
-              <span>Total Balance</span> {showBalance ? walletBalance.toString() : '٭٭٭٭٭٭'}
-            </h3>
+            <BalanceText>
+              <span>Total Balance</span> {showBalance ? balance.toString() : '٭٭٭٭٭٭'}
+            </BalanceText>
             <BalanceEye onClick={() => setShowBalance(!showBalance)}>
               {showBalance ? <AiFillEyeInvisible /> : <AiFillEye />}
             </BalanceEye>

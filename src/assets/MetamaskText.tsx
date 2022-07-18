@@ -3,7 +3,7 @@ import { useAppSelector } from '../app/hooks';
 export default function MetamaskText() {
   const isDarkTheme = useAppSelector((state) => state.theme.isDarkTheme);
   return (
-    <svg height="5rem" viewBox="0 0 215 33">
+    <svg viewBox="0 0 215 33">
       <path
         style={{ transition: 'all 0.3s ease-in-out' }}
         fill={isDarkTheme ? '#fff' : '#000'}

@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import theme from 'styled-theming';
 
 const TableCover = styled.table`
-  max-width: calc(100vw - 2rem);
-  width: 1200px;
+  max-width: calc(100vw - 5rem);
+  width: 920px;
+  font-size: 0.8rem;
   border-collapse: collapse;
   border: 1px solid
     ${theme('theme', {
@@ -11,6 +12,11 @@ const TableCover = styled.table`
       dark: 'rgba(255, 255, 255, 0.2)',
     })};
   text-align: left;
+
+  @media (min-width: 1024px) {
+    width: 1200px;
+    font-size: 1rem;
+  }
 `;
 
 const TableRow = styled.tr`
@@ -39,7 +45,19 @@ const TableRow = styled.tr`
     padding: 1rem 2rem;
     margin: 1rem;
     cursor: pointer;
-    height: 1rem;
+    height: 0.7rem;
+
+    @media (min-width: 1024px) {
+      height: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      padding: 0.5rem 1rem;
+    }
+
+    @media (max-width: 445px) {
+      padding: 0.5rem 0.4rem;
+    }
   }
 
   th {
@@ -102,6 +120,8 @@ const ButtonsContainer = styled.div`
 
 const HomeScreen = styled.div`
   animation: fadein 1s;
+  height: calc(100vh - 5.8rem);
+  max-width: calc(100vw - 5rem);
 `;
 
 export { TableCover, TableRow, ButtonsContainer, HomeScreen };

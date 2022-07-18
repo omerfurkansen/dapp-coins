@@ -16,13 +16,13 @@ const MetamaskFoxComponent = styled(MetamaskFox)<{ size?: 'small' | 'big' }>`
   ${({ size = 'big' }) =>
     size === 'small'
       ? `
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-  `
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    `
       : `
-    width: 30%;
-    height: 30%;
+      width: 20%;
+      height: 20%;
   `}
   object-fit: contain;
 `;
@@ -67,6 +67,20 @@ const WalletComponent = styled.div`
   }
 `;
 
+const AdressText = styled.h3`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const BalanceText = styled.h3`
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 200px;
+  height: 50px;
+`;
+
 const BalanceEye = styled.div`
   cursor: pointer;
 `;
@@ -80,6 +94,8 @@ const CopyWalletAddress = styled(MdContentCopy)`
 export {
   MetamaskContainer,
   CopyWalletAddress,
+  AdressText,
+  BalanceText,
   BalanceEye,
   WalletComponent,
   MetamaskFoxComponent,

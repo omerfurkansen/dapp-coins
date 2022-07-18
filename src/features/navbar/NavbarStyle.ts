@@ -10,12 +10,17 @@ const NavbarContainer = styled.nav`
   padding: 0.5rem 1rem;
   position: fixed;
   backdrop-filter: blur(10px);
+  height: 2rem;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1;
-  height: 3rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+  // tablet screen
+  @media (min-width: 768px) {
+    height: 2.5rem;
+  }
 `;
 
 const NavbarLink = styled(Link)`
@@ -43,8 +48,8 @@ const NavbarLink = styled(Link)`
   &.active {
     box-shadow: inset 0px -3px 0px green;
   }
+
   @media (max-width: 768px) {
-    padding: 0.5rem 0;
     font-size: 1rem;
   }
 `;
@@ -52,9 +57,9 @@ const NavbarLink = styled(Link)`
 const ThemeSwitcher = styled(IoMdSunny)`
   position: absolute;
   right: 2rem;
-  top: 1.5rem;
-  width: 24px;
-  height: 24px;
+  top: 0.9rem;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
   user-select: none;
 
@@ -65,6 +70,13 @@ const ThemeSwitcher = styled(IoMdSunny)`
     })};
     transition: fill 0.2s ease-in-out;
   }
+
+  // tablet screen
+  @media (min-width: 768px) {
+    width: 24px;
+    height: 24px;
+    top: 1.1rem;
+  }
 `;
 
 const GoBackLink = styled(Link)`
@@ -72,12 +84,12 @@ const GoBackLink = styled(Link)`
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   position: absolute;
   left: 2rem;
-  top: 1.5rem;
+  top: 0.9rem;
   z-index: 1;
   &:hover {
     color: ${theme('theme', {
@@ -92,9 +104,11 @@ const GoBackLink = styled(Link)`
     height: 24px;
     margin-right: 0.5rem;
   }
-  @media (max-width: 768px) {
-    padding: 0.5rem 0;
-    font-size: 1rem;
+
+  // tablet screen
+  @media (min-width: 768px) {
+    font-size: 1.2rem;
+    top: 1.1rem;
   }
 `;
 
