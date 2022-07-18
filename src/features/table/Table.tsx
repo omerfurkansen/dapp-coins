@@ -1,10 +1,12 @@
-import { fetchTableData, setTableData } from './tableSlice';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Chart from 'react-apexcharts';
-import Spinner from '../../assets/spinner.svg';
+import { ApexOptions } from 'apexcharts';
+import { fetchTableData, setTableData } from './tableSlice';
 import { TableCover, TableRow, HomeScreen, ButtonsContainer } from './TableStyles';
+import Spinner from '../Spinner';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useScreenWidth } from '../../hooks';
 
 interface ISortBy {
   column: 'market_cap_rank' | 'name' | 'current_price' | 'total_volume' | 'market_cap';
@@ -16,11 +18,14 @@ export default function Table() {
   const dispatch = useAppDispatch();
   const tableData = useAppSelector((state) => state.table.data);
   const isLoading = useAppSelector((state) => state.table.loading);
+
   const [pageNumber, setPageNumber] = useState(1);
   const [sortBy, setSortBy] = useState<ISortBy>({ column: 'market_cap_rank', isAscending: false });
 
+  const widthSize = useScreenWidth();
+
   function renderLineChart(price: number[]) {
-    const options = {
+    const options: ApexOptions = {
       tooltip: {
         enabled: false,
       },
@@ -92,18 +97,18 @@ export default function Table() {
       <TableCover>
         <thead>
           <TableRow>
-            <th onClick={() => handleSortClick('market_cap_rank')}>#</th>
+            {widthSize > 780 && <th onClick={() => handleSortClick('market_cap_rank')}>#</th>}
             <th onClick={() => handleSortClick('name')}>Coin</th>
             <th onClick={() => handleSortClick('current_price')}>Price</th>
             <th onClick={() => handleSortClick('total_volume')}>24h Volume</th>
-            <th onClick={() => handleSortClick('market_cap')}>Mkt Cap</th>
-            <th>Last 7 days</th>
+            {widthSize > 780 && <th onClick={() => handleSortClick('market_cap')}>Mkt Cap</th>}
+            {widthSize > 1024 && <th>Last 7 days</th>}
           </TableRow>
         </thead>
         <tbody>
           {tableData.map((item, index) => (
             <TableRow key={index} onClick={() => navigate(`/coin/${item.id}`)}>
-              <td>{item.market_cap_rank}</td>
+              {widthSize > 780 && <td>{item.market_cap_rank}</td>}
               <td
                 style={{
                   display: 'flex',
@@ -115,18 +120,19 @@ export default function Table() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    width="24"
-                    height="24"
-                    style={{ marginLeft: '-1rem', marginRight: '1rem' }}
+                    width={widthSize > 780 ? '24' : '16'}
+                    height={widthSize > 780 ? '24' : '16'}
+                    style={{ marginLeft: '-1rem', marginRight: widthSize > 430 ? '1rem' : 0 }}
                   />
-                  {item.name}
+                  {widthSize > 780 ? item.name : ''}
                 </span>
+
                 <span style={{ marginLeft: '1rem' }}>{item.symbol.toUpperCase()}</span>
               </td>
               <td>{formatDollar(item.current_price)}</td>
               <td>{formatDollar(item.total_volume)}</td>
-              <td>{formatDollar(item.market_cap)}</td>
-              <td>{renderLineChart(item.sparkline_in_7d.price)}</td>
+              {widthSize > 780 && <td>{formatDollar(item.market_cap)}</td>}
+              {widthSize > 1024 && <td>{renderLineChart(item.sparkline_in_7d.price)}</td>}
             </TableRow>
           ))}
         </tbody>
@@ -149,9 +155,7 @@ export default function Table() {
           </ButtonsContainer>
         </HomeScreen>
       ) : (
-        <div style={{ textAlign: 'center' }}>
-          <img src={Spinner} alt="loading" width="50%" />
-        </div>
+        <Spinner />
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import { ApexOptions } from 'apexcharts';
 import Chart from 'react-apexcharts';
 import { fetchCoinChartData } from './coinSlice';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import Spinner from '../../assets/spinner.svg';
+import Spinner from '../Spinner';
 
 export default function Coin() {
   const { id } = useParams();
@@ -31,6 +31,32 @@ export default function Coin() {
       },
     ];
     const options: ApexOptions = {
+      responsive: [
+        {
+          breakpoint: 1024,
+          options: {
+            chart: {
+              width: 768,
+            },
+          },
+        },
+        {
+          breakpoint: 768,
+          options: {
+            chart: {
+              width: 540,
+            },
+          },
+        },
+        {
+          breakpoint: 540,
+          options: {
+            chart: {
+              width: 380,
+            },
+          },
+        },
+      ],
       chart: {
         toolbar: {
           show: false,
@@ -60,18 +86,8 @@ export default function Coin() {
         enabled: false,
       },
     };
-    return <Chart width={1200} type="candlestick" series={series} options={options} />;
+    return <Chart width={1024} type="candlestick" series={series} options={options} />;
   }
 
-  return (
-    <>
-      {isLoading ? (
-        <div style={{ textAlign: 'center' }}>
-          <img src={Spinner} alt="loading" width="50%" />
-        </div>
-      ) : (
-        renderChart()
-      )}
-    </>
-  );
+  return isLoading ? <Spinner /> : renderChart();
 }
